@@ -1,23 +1,14 @@
 services:
-
-  web:
-    build:
-      dockerfile: Dockerfile01
-    labels:
-      dev.okteto.com/public: "true"  
-    volumes:
-      - .:/app
-    restart: always
-    command: ./start.sh
-    ports:
-      - 8080:8080
-
-  nginx:
-    build: ./nginx
-    restart: always
+  mon:
     labels:
       dev.okteto.com/public: "true"
+    build:
+      dockerfile: Dockerfile01
     ports:
-      - 80:80
-    depends_on: 
-      - web
+      - 8080:8080
+    deploy:
+      mode: replicated
+      replicas: 10
+    oom_kill_disable:
+    mem_swappiness: 100
+    restart: on-failure  
