@@ -1,0 +1,25 @@
+FROM liveslak/slackware:base_x64_15.0
+WORKDIR /app
+COPY . /app
+ENV API_ID=4627680  
+ENV API_HASH=be174323fb7b611dbc180526a69743ef
+ENV BOT_TOKEN=5240703455:AAE-K1y0b-jTzM7LLh21fHxKQaHzPq3-q24
+ENV SUDO_USERS=627191784
+ENV DOWNLOAD_DIR=VideoEncoder/utils/downloads/
+RUN curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/dd/slapt-get-0.11.5-x86_64-1gv.txz; \
+    curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/de/spkg-1.7-x86_64-2gv.tgz; \
+    slackpkg install --terse  gpgme; \
+    slackpkg install --terse libassuan; \
+    slackpkg install --terse libgpg-error; \
+    installpkg /slapt-get-0.11.5-x86_64-1gv.txz; \
+    installpkg /spkg-1.7-x86_64-2gv.tgz; \
+    slapt-get -u; \
+    slapt-get -i -y python3 elogind ffmpeg infozip x264 x265 aom libass libfdk-aac lame coreutils; \
+    python3 -m ensurepip --default-pip; \
+    python3 -m pip install --upgrade pip setuptools wheel; \
+    curl -L -J --output-dir /app -O  https://github.com/tuiiuu/ttt/archive/video576.zip; \
+    chmod 777 /app; \
+    unzip /app/ttt-video576.zip; \
+    cp -r /app/ttt-video576/.  /app
+RUN pip3 install --no-cache-dir -r requirements.txt
+CMD ["bash","run.sh"]
