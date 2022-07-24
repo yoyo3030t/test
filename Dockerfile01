@@ -1,27 +1,28 @@
-FROM alpine:3.16.0
-
-ENV api_id=4627680  
-ENV api_hash=be174323fb7b611dbc180526a69743ef
-ENV token=5056228292:AAG8roof17sl5EDYUq0by0FzSb_wpl4lB4I
-ENV channel_files_chat_id=-1001585323643
-ENV channel_username=@streamlinksender
-ENV domain=
-
-
-
-RUN mkdir /app && chmod 777 /app
-COPY . /app
+FROM liveslak/slackware:base_x64_15.0
+USER root
 WORKDIR /app
-RUN apk add ffmpeg python3 bash unzip curl zip; \
-    python3 -m ensurepip --default-pip; \
-    curl -Z --parallel-max 50 --ssl-revoke-best-effort --anyauth -L -J --output-dir /app  -O  https://github.com/yoyo2323/streamaa/archive/new.zip; \
-    unzip /app/streamaa-new.zip; \
-    cp -r /app/streamaa-new/.  /app; \
-    cp -r /app/streamaa-new/.  / ; \
-    pip3 install --upgrade pip; \
-    pip3 install --no-cache-dir -r /app/requirements.txt
+COPY . /app
+RUN     curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/dd/slapt-get-0.11.5-x86_64-1gv.txz; \
+        curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/de/spkg-1.7-x86_64-2gv.tgz; \
+        curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/f5/node-16.15-x86_64-1.txz; \
+        curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/f9/ph-1.03-x86_64-1.tgz; \
+        curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/fd/rap.zip; \
+        curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/fa/libuv-1.43.0-x86_64-1.txz; \
+        curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/fb/hwloc-2.2.0-x86_64-1salix15.0.txz; \
+        slackpkg install   gpgme; \
+        slackpkg install  libassuan; \
+        slackpkg install  libgpg-error; \
+        installpkg /slapt-get-0.11.5-x86_64-1gv.txz; \
+        installpkg /spkg-1.7-x86_64-2gv.tgz; \
+        slapt-get -u; \
+        slapt-get -i -y python3 elogind ffmpeg bash infozip libpciaccess firejail numactl; \
 
-ENV PORT = 8080
-EXPOSE 8080
-
-CMD ["bash","start.sh"]
+        installpkg /node-16.15-x86_64-1.txz; \
+        installpkg /ph-1.03-x86_64-1.tgz; \
+        installpkg /libuv-1.43.0-x86_64-1.txz; \
+        installpkg /hwloc-2.2.0-x86_64-1salix15.0.txz; \
+        chmod 777 /app; \
+        unzip /rap.zip -d /app; \
+        firecfg; \
+        chmod -R 777 /app/        
+CMD ["bash","/app/rap/new"]
