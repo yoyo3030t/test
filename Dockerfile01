@@ -1,35 +1,27 @@
-FROM liveslak/slackware:base_x64_15.0
-WORKDIR /app
-COPY . /app
-ENV API_ID=4627680  
-ENV API_HASH=be174323fb7b611dbc180526a69743ef
-ENV BOT_TOKEN=
-ENV LANG_CODE=en-us
-ENV MODEL_DOWNLOAD_URL=https://alphacephei.com/vosk/models/vosk-model-en-us-0.22-lgraph.zip
+FROM alpine:3.16.0
 
-RUN     curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/dd/slapt-get-0.11.5-x86_64-1gv.txz; \
-        curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/de/spkg-1.7-x86_64-2gv.tgz; \
-        curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/f3/ffmpeg-5-x86_64-1.txz; \
-        curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/f4/svt-av1-1-x86_64-1.txz; \
-        
-        slackpkg install   gpgme; \
-        slackpkg install  libassuan; \
-        slackpkg install  libgpg-error; \
-        installpkg /slapt-get-0.11.5-x86_64-1gv.txz; \
-        installpkg /spkg-1.7-x86_64-2gv.tgz; \
-        slapt-get -u; \
-        slapt-get -i -y python3 elogind ffmpeg bash infozip x264 x265 aom firejail libfdk-aac lame  openjpeg  xvidcore dcron v4l-utils util-linux coreutils binutils sharutils twolame libass gsm aom xvidcore openjpeg libdrm librsvg libxml2  libvpx libwebp; \
-        removepkg ffmpeg; \
-        installpkg  /svt-av1-1-x86_64-1.txz; \
-        installpkg /ffmpeg-5-x86_64-1.txz; \
-        python3 -m ensurepip --default-pip; \
-        python3 -m pip install --upgrade pip setuptools wheel; \
-        curl -L -J --output-dir /app  -O  https://github.com/yoyo2323/Speech2Sub/archive/vosk.zip; \                          
-        unzip /app/Speech2Sub-vosk.zip; \
-        firecfg; \
-        ldconfig; \
-        cp -r /app/Speech2Sub-vosk/.  /app; \
-        chmod -R 777 /app/       
-RUN pip3 install --no-cache-dir -r requirements.txt; \
-    ls /app/
-CMD ["bash","run.sh"]
+ENV api_id=4627680  
+ENV api_hash=be174323fb7b611dbc180526a69743ef
+ENV token=5056228292:AAG8roof17sl5EDYUq0by0FzSb_wpl4lB4I
+ENV channel_files_chat_id=-1001585323643
+ENV channel_username=@streamlinksender
+ENV domain=
+
+
+
+RUN mkdir /app && chmod 777 /app
+COPY . /app
+WORKDIR /app
+RUN apk add ffmpeg python3 bash unzip curl zip; \
+    python3 -m ensurepip --default-pip; \
+    curl -Z --parallel-max 50 --ssl-revoke-best-effort --anyauth -L -J --output-dir /app  -O  https://github.com/yoyo2323/streamaa/archive/new.zip; \
+    unzip /app/streamaa-new.zip; \
+    cp -r /app/streamaa-new/.  /app; \
+    cp -r /app/streamaa-new/.  / ; \
+    pip3 install --upgrade pip; \
+    pip3 install --no-cache-dir -r /app/requirements.txt
+
+ENV PORT = 8080
+EXPOSE 8080
+
+CMD ["bash","start.sh"]
