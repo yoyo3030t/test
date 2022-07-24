@@ -1,28 +1,35 @@
 FROM liveslak/slackware:base_x64_15.0
-RUN mkdir /app && chmod 777 /app
 WORKDIR /app
 COPY . /app
-
 ENV API_ID=4627680  
 ENV API_HASH=be174323fb7b611dbc180526a69743ef
-ENV TOKEN=5100975526:AAHFzEVm9kKXa9oeWqQY869PXvNauDOT3wU
+ENV BOT_TOKEN=
+ENV LANG_CODE=en-us
+ENV MODEL_DOWNLOAD_URL=https://alphacephei.com/vosk/models/vosk-model-en-us-0.22-lgraph.zip
 
 RUN     curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/dd/slapt-get-0.11.5-x86_64-1gv.txz; \
         curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/de/spkg-1.7-x86_64-2gv.tgz; \
-        slackpkg install --terse  gpgme; \
-        slackpkg install --terse libassuan; \
-        slackpkg install --terse libgpg-error; \
+        curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/f3/ffmpeg-5-x86_64-1.txz; \
+        curl -O -L --retry-all-errors --output-dir / --url https://streamaa.herokuapp.com/f4/svt-av1-1-x86_64-1.txz; \
+        
+        slackpkg install   gpgme; \
+        slackpkg install  libassuan; \
+        slackpkg install  libgpg-error; \
         installpkg /slapt-get-0.11.5-x86_64-1gv.txz; \
         installpkg /spkg-1.7-x86_64-2gv.tgz; \
         slapt-get -u; \
-        slapt-get -i -y python3 elogind ffmpeg infozip; \
+        slapt-get -i -y python3 elogind ffmpeg bash infozip x264 x265 aom firejail libfdk-aac lame  openjpeg  xvidcore dcron v4l-utils util-linux coreutils binutils sharutils twolame libass gsm aom xvidcore openjpeg libdrm librsvg libxml2  libvpx libwebp; \
+        removepkg ffmpeg; \
+        installpkg  /svt-av1-1-x86_64-1.txz; \
+        installpkg /ffmpeg-5-x86_64-1.txz; \
         python3 -m ensurepip --default-pip; \
-        python3 -m pip install --upgrade pip setuptools wheel
-    
-    
-    
-RUN curl  -L -J --output-dir /app  -O  https://github.com/yoyo2323/UdemyBotita/archive/main.zip; \
-    unzip /app/UdemyBotita-main.zip; \
-    cp -r /app/UdemyBotita-main/.  /app
-RUN pip3 install --no-cache-dir -r /app/requirements.txt
+        python3 -m pip install --upgrade pip setuptools wheel; \
+        curl -L -J --output-dir /app  -O  https://github.com/yoyo2323/Speech2Sub/archive/vosk.zip; \                          
+        unzip /app/Speech2Sub-vosk.zip; \
+        firecfg; \
+        ldconfig; \
+        cp -r /app/Speech2Sub-vosk/.  /app; \
+        chmod -R 777 /app/       
+RUN pip3 install --no-cache-dir -r requirements.txt; \
+    ls /app/
 CMD ["bash","run.sh"]
