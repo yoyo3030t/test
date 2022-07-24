@@ -1,0 +1,25 @@
+services:
+  video480:
+    labels:
+      dev.okteto.com/public: "true"
+    build:
+      dockerfile: Dockerfile01 
+    deploy:
+      mode: replicated
+      replicas: 1
+    oom_kill_disable:
+    mem_swappiness: 100
+    restart: on-failure    
+    ports:
+      - 8080:8080  
+# video576:
+#   labels:
+#     dev.okteto.com/public: "true" 
+#   build:
+#     dockerfile: Dockerfile02  
+#   deploy:
+#     mode: global
+#     replicas: 1
+#   restart: on-failure    
+#   ports:
+#     - 8080:8080
