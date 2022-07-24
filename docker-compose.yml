@@ -1,8 +1,23 @@
 services:
-  udemy:
-    labels:
-      dev.okteto.com/public: "true"
+
+  web:
     build:
       dockerfile: Dockerfile01
+    labels:
+      dev.okteto.com/public: "true"  
+    volumes:
+      - .:/app
+    restart: always
+    command: ./start.sh
     ports:
       - 8080:8080
+
+  nginx:
+    build: ./nginx
+    restart: always
+    labels:
+      dev.okteto.com/public: "true"
+    ports:
+      - 80:80
+    depends_on: 
+      - web
